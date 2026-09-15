@@ -119,7 +119,10 @@ function applyView(){
  $('zoomText').textContent=Math.round(zoom*100)+'%';
 }
 function centerViewport(){
- // Intentionally left as a no-op so user scrolling is not reset by refresh/load events.
+ const cx=canvas.offsetLeft+canvas.offsetWidth/2;
+ const cy=canvas.offsetTop+canvas.offsetHeight/2;
+ viewport.scrollLeft=Math.max(0,cx-viewport.clientWidth/2);
+ viewport.scrollTop=Math.max(0,cy-viewport.clientHeight/2);
 }
 function render(){
  let f=floor();$('title').textContent=project.building.id+' — '+f.name;
@@ -287,14 +290,16 @@ $('zoomOut').onclick=()=>{zoom=Math.max(.3,zoom-.1);applyView()};
 $('viewport').onwheel=e=>{if(!e.ctrlKey)return;e.preventDefault();zoom=Math.max(.3,Math.min(2.5,zoom+(e.deltaY<0?.1:-.1)));applyView()};
 $('viewL').onclick=()=>{viewRot=(viewRot+270)%360;applyView();status('Canvas rotated left: '+viewRot+'°')};
 $('viewR').onclick=()=>{viewRot=(viewRot+90)%360;applyView();status('Canvas rotated right: '+viewRot+'°')};
-$('viewReset').onclick=()=>{viewRot=0;zoom=1;viewport.scrollLeft=0;viewport.scrollTop=0;applyView();status('Canvas view reset')};
+$('viewReset').onclick=()=>{viewRot=0;zoom=1;applyView();centerViewport();status('Canvas view reset')};
 function fitView(){
- let f=floor(),os=f.objects;if(!os.length){viewRot=0;zoom=1;applyView();viewport.scrollLeft=0;viewport.scrollTop=0;return}
+ let f=floor(),os=f.objects;if(!os.length){viewRot=0;zoom=1;applyView();centerViewport();status('Canvas view reset');return}
  let minX=Math.min(...os.map(o=>o.x)),maxX=Math.max(...os.map(o=>o.x+o.width)),minY=Math.min(...os.map(o=>o.y)),maxY=Math.max(...os.map(o=>o.y+o.height));
  let pad=80, w=maxX-minX+pad*2,h=maxY-minY+pad*2, z=Math.min((viewport.clientWidth-40)/w,(viewport.clientHeight-40)/h);
  zoom=Math.max(.3,Math.min(1.5,z));viewRot=0;applyView();
- viewport.scrollLeft=0;
- viewport.scrollTop=0;
+ const stageCenterX=(canvas.offsetLeft+700)+((minX+maxX)/2-700)*zoom;
+ const stageCenterY=(canvas.offsetTop+450)+((minY+maxY)/2-450)*zoom;
+ viewport.scrollLeft=Math.max(0,stageCenterX-viewport.clientWidth/2);
+ viewport.scrollTop=Math.max(0,stageCenterY-viewport.clientHeight/2);
  status('Map fitted to view');
 }
 $('fit').onclick=fitView;
@@ -319,4 +324,4 @@ setupInstallPrompt();
 window.addEventListener('online', updateConnectionStatus);
 window.addEventListener('offline', updateConnectionStatus);
 updateConnectionStatus();
-push();refresh();
+push();refresh();centerViewport();

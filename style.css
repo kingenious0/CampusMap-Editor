@@ -8,17 +8,17 @@ button:hover{background:#f1f5f9}
 .topbar{height:68px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
 .topbar b{display:block;font-size:18px}.topbar small{color:#6b7280}
 .top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.top label{font-size:11px;color:#6b7280}
-.tools,.props{background:#fff;padding:11px;overflow:auto}.tools{border-right:1px solid #d9dee5}.props{border-left:1px solid #d9dee5}
+.tools,.props{background:#fff;padding:11px;overflow:auto;min-height:0}.tools{border-right:1px solid #d9dee5}.props{border-left:1px solid #d9dee5}
 .tools h3,.props h3{margin:2px 0 10px}.tool{display:block;width:100%;text-align:left}.tool.active{border-color:#2563eb;background:#eff6ff}
 .tool kbd{margin-right:6px}.help{border-top:1px solid #d9dee5;margin-top:10px;padding-top:8px;color:#6b7280;font-size:11px;line-height:1.8}
 .help div{display:flex;justify-content:space-between}kbd{border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;background:#f8fafc;padding:1px 5px;font:11px ui-monospace,monospace;color:#334155}
-main{height:calc(100vh - 98px);display:grid;grid-template-columns:185px 1fr 270px}.area{min-width:0;display:flex;flex-direction:column}
+main{height:calc(100vh - 98px);display:grid;grid-template-columns:185px 1fr 270px;min-height:0}.area{min-width:0;min-height:0;height:100%;display:flex;flex-direction:column}
 .bar{height:44px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;justify-content:space-between;align-items:center;padding:7px 10px;gap:8px}
 .bar #status{color:#6b7280;font-size:11px;margin-left:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .viewtools{display:flex;align-items:center;gap:2px;white-space:nowrap}.viewtools button{padding:4px 7px}
-#viewport{flex:1;overflow:scroll;background:#e9edf1;position:relative;cursor:default}
+#viewport{flex:1;min-height:0;overflow:auto;background:#e9edf1;position:relative;cursor:default}
 #stage{position:relative;width:3000px;height:3000px;min-width:3000px;min-height:3000px;background:rgba(255,255,255,.28);overflow:visible}
-#canvas{position:absolute;left:120px;top:80px;width:1400px;height:900px;transform-origin:center center;background-color:rgba(255,255,255,.72);
+#canvas{position:absolute;left:800px;top:1050px;width:1400px;height:900px;transform-origin:center center;background-color:rgba(255,255,255,.72);
  background-image:linear-gradient(to right,rgba(80,90,100,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(80,90,100,.08) 1px,transparent 1px);
  background-size:20px 20px;touch-action:none;transform:rotate(0deg) scale(1)}
 #lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
