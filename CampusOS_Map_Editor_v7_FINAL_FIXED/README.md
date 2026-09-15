@@ -1,4 +1,4 @@
-# CampusOS Map Editor v7 — FINAL FIX
+# CampusOS Map Editor
 
 ## Object placement
 The editor now creates objects on `pointerup` during capture phase.
