@@ -1,0 +1,15 @@
+# OS and editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Local runtime data
+*.local
+
+# Optional: ignore generated exports if you don't want them in git
+# *.json
