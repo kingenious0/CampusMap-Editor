@@ -7,11 +7,21 @@ const $=id=>document.getElementById(id), floorSel=$('floorSelect'), canvas=$('ca
 const installBtn=$('installBtn'), connectionStatus=$('connectionStatus');
 let deferredPrompt=null;
 
+function isStandaloneMode(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
 function updateConnectionStatus(){
   const online=navigator.onLine;
-  connectionStatus.textContent=online?'● Online':'● Offline';
+  const standalone=isStandaloneMode();
+  connectionStatus.textContent=online ? (standalone ? '● Installed app' : '● Online') : '● Offline';
   connectionStatus.classList.toggle('online',online);
   connectionStatus.classList.toggle('offline',!online);
+  if(standalone){
+    installBtn.hidden=true;
+    status('Installed CampusOS app mode — offline editing is active');
+    return;
+  }
   status(online ? 'Ready — choose a tool, then click empty canvas' : 'Offline mode — local changes remain saved');
 }
 
@@ -27,12 +37,25 @@ function registerServiceWorker(){
 }
 
 function setupInstallPrompt(){
+  const mediaQuery=window.matchMedia('(display-mode: standalone)');
+  const updateStandaloneState=()=>{
+    if(isStandaloneMode()){
+      installBtn.hidden=true;
+      status('CampusOS is running as an installed app');
+    }
+  };
+  if(mediaQuery.addEventListener){
+    mediaQuery.addEventListener('change', updateStandaloneState);
+  } else if(mediaQuery.addListener){
+    mediaQuery.addListener(updateStandaloneState);
+  }
+
   window.addEventListener('beforeinstallprompt',event=>{
     event.preventDefault();
     deferredPrompt=event;
     installBtn.hidden=false;
     installBtn.textContent='Install CampusOS';
-    status('Install available — use the install button to create an app shortcut');
+    status('Install available — save CampusOS to your Applications or app launcher');
   });
 
   window.addEventListener('appinstalled',()=>{
@@ -43,13 +66,13 @@ function setupInstallPrompt(){
 
   installBtn.addEventListener('click', async ()=>{
     if(!deferredPrompt){
-      status('Install prompt is not available in this browser yet');
+      status('This browser is not offering an install prompt yet. Try Chrome or Edge on desktop.');
       return;
     }
     deferredPrompt.prompt();
     const choice=await deferredPrompt.userChoice;
     if(choice.outcome==='accepted'){
-      status('Install accepted — CampusOS will be added to your applications');
+      status('Install accepted — CampusOS will be added to your app launcher');
     } else {
       status('Install dismissed');
     }

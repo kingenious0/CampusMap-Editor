@@ -2,12 +2,16 @@
   "name": "CampusOS Map Editor",
   "short_name": "CampusOS",
   "description": "Offline indoor campus mapping editor for CampusOS",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#f4f6f8",
   "theme_color": "#2d2440",
   "orientation": "any",
+  "categories": ["productivity", "utilities", "maps"],
   "icons": [
     {
       "src": "./icons/icon-192.svg",
@@ -20,6 +24,15 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "platform": "wide",
+      "label": "CampusOS app workspace"
     }
   ]
 }
