@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CampusOS Map Editor v7</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div><b>CampusOS Map Editor</b><small>Offline indoor mapping workspace</small></div>
+  <div class="top">
+    <label>Building <select><option>ROB — Reynolds Okai Building</option></select></label>
+    <label>Floor <select id="floorSelect"></select></label>
+    <button id="newFloor">+ Floor</button><button id="save">Save</button>
+    <button id="export">Export JSON</button><button id="import">Import JSON</button>
+    <input id="file" type="file" accept=".json" hidden>
+  </div>
+</header>
+
+<main>
+<aside class="tools">
+<h3>Tools</h3>
+<button class="tool active" data-tool="select"><kbd>V</kbd> Select</button>
+<button class="tool" data-tool="room"><kbd>R</kbd> Room</button>
+<button class="tool" data-tool="office"><kbd>O</kbd> Office</button>
+<button class="tool" data-tool="corridor"><kbd>C</kbd> Corridor</button>
+<button class="tool" data-tool="entrance"><kbd>E</kbd> Entrance</button>
+<button class="tool" data-tool="stair"><kbd>S</kbd> Stair</button>
+<button class="tool" data-tool="junction"><kbd>J</kbd> Junction</button>
+<button class="tool" data-tool="facility"><kbd>F</kbd> Facility</button>
+<button class="tool" data-tool="wall"><kbd>W</kbd> Wall</button>
+<button class="tool" data-tool="door"><kbd>D</kbd> Door</button>
+<button class="tool" data-tool="connect"><kbd>K</kbd> Connect</button>
+<hr>
+<button id="rotL">↺ Rotate 90°</button><button id="rotR">↻ Rotate 90°</button>
+<button id="del" class="danger">Delete</button>
+<hr>
+<button id="undo">↶ Undo</button><button id="redo">↷ Redo</button>
+<button id="validate">✓ Validate</button>
+<button id="clear" class="danger">Clear Floor</button>
+<section class="help">
+<h4>Shortcuts</h4>
+<div><kbd>[</kbd> object rotate left</div><div><kbd>]</kbd> object rotate right</div>
+<div><kbd>Q</kbd> canvas rotate left</div><div><kbd>G</kbd> canvas rotate right</div>
+<div><kbd>Space+drag</kbd> pan canvas</div><div><kbd>Middle drag</kbd> pan canvas</div>
+<div><kbd>Delete</kbd> remove</div><div><kbd>Ctrl+Z</kbd> undo</div>
+<div><kbd>Ctrl+Y</kbd> redo</div><div><kbd>Ctrl+S</kbd> save</div>
+<div><kbd>Esc</kbd> cancel/select</div>
+</section>
+</aside>
+
+<section class="area">
+<div class="bar">
+  <b id="title"></b>
+  <span id="status">Ready — choose a tool, then click empty canvas</span>
+  <span class="viewtools">
+    <button id="viewL" title="Rotate canvas left">⟲</button>
+    <button id="viewR" title="Rotate canvas right">⟳</button>
+    <button id="viewReset" title="Reset canvas view">Reset</button>
+    <button id="fit" title="Fit map to viewport">Fit</button><button id="testAdd" title="Test object placement">Test Room</button>
+    <button id="graphToggle" title="Show/hide connection graph">Graph</button>
+    <button id="labelsToggle" title="Show/hide labels">Labels</button>
+    <button id="zoomOut">−</button><span id="zoomText">100%</span><button id="zoomIn">+</button>
+  </span>
+</div>
+<div id="viewport"><div id="stage"><div id="canvas"><svg id="lines"></svg><div id="objects"></div></div></div></div>
+</section>
+
+<aside class="props">
+<h3>Properties</h3><p id="empty">Select an object to edit it.</p>
+<form id="form" hidden>
+<label>ID<input id="pid" disabled></label><label>Name<input id="pname" required></label>
+<label>Type<input id="ptype" disabled></label>
+<label>Description<textarea id="pdesc"></textarea></label>
+<label>Location note<textarea id="pnote" placeholder="e.g. Library side — left"></textarea></label>
+<div class="grid">
+<label>X<input id="px" type="number"></label><label>Y<input id="py" type="number"></label>
+<label>Width<input id="pw" type="number" min="10"></label><label>Height<input id="ph" type="number" min="10"></label>
+<label>Rotation<input id="prot" type="number" step="5"></label><label>Floor<input id="pfloor" disabled></label>
+</div><button class="primary">Apply Changes</button>
+</form>
+<div id="connBox" hidden>
+<h4>Connection</h4><label>From<select id="from"></select></label>
+<label>To<select id="to"></select></label>
+<label>Type<select id="ctype"><option>corridor</option><option>doorway</option><option>stairs</option><option>entrance</option><option>lift</option><option>path</option></select></label>
+<p id="dist"></p><button id="delConn" class="danger">Delete Connection</button>
+</div>
+<div id="validation"></div>
+</aside>
+</main>
+<footer><span id="saved">Local autosave enabled</span><span>CampusOS Map Editor v7</span></footer>
+<script src="app.js"></script>
+<script>
+document.getElementById('testAdd').onclick=()=>{
+  if(window.CampusOS){ window.CampusOS.setTool('room'); window.CampusOS.add('room',600,350); }
+};
+</script></body>
+</html>
