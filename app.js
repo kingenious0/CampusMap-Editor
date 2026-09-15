@@ -4,6 +4,59 @@ const KEYS={v:'select',r:'room',o:'office',c:'corridor',e:'entrance',s:'stair',j
 let project=load(), tool='select', selected=null, selectedConn=null, connectStart=null;
 let zoom=1, viewRot=0, drag=null, pan=null, hist=[], hi=-1, showGraph=false, showLabels=true;
 const $=id=>document.getElementById(id), floorSel=$('floorSelect'), canvas=$('canvas'), objects=$('objects'), lines=$('lines'), viewport=$('viewport'), stage=$('stage');
+const installBtn=$('installBtn'), connectionStatus=$('connectionStatus');
+let deferredPrompt=null;
+
+function updateConnectionStatus(){
+  const online=navigator.onLine;
+  connectionStatus.textContent=online?'● Online':'● Offline';
+  connectionStatus.classList.toggle('online',online);
+  connectionStatus.classList.toggle('offline',!online);
+  status(online ? 'Ready — choose a tool, then click empty canvas' : 'Offline mode — local changes remain saved');
+}
+
+function registerServiceWorker(){
+  if(!('serviceWorker' in navigator))return;
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./service-worker.js').then(() => {
+      console.log('Service worker registered');
+    }).catch(err => {
+      console.error('Service worker registration failed:', err);
+    });
+  });
+}
+
+function setupInstallPrompt(){
+  window.addEventListener('beforeinstallprompt',event=>{
+    event.preventDefault();
+    deferredPrompt=event;
+    installBtn.hidden=false;
+    installBtn.textContent='Install CampusOS';
+    status('Install available — use the install button to create an app shortcut');
+  });
+
+  window.addEventListener('appinstalled',()=>{
+    deferredPrompt=null;
+    installBtn.hidden=true;
+    status('CampusOS installed successfully');
+  });
+
+  installBtn.addEventListener('click', async ()=>{
+    if(!deferredPrompt){
+      status('Install prompt is not available in this browser yet');
+      return;
+    }
+    deferredPrompt.prompt();
+    const choice=await deferredPrompt.userChoice;
+    if(choice.outcome==='accepted'){
+      status('Install accepted — CampusOS will be added to your applications');
+    } else {
+      status('Install dismissed');
+    }
+    deferredPrompt=null;
+    installBtn.hidden=true;
+  });
+}
 
 function uid(p='id'){return p+'_'+Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-3)}
 function base(){return {version:2,building:{id:'ROB',name:'Reynolds Okai Building'},floors:[{id:'ground',name:'Ground Floor',level:0,objects:[],connections:[]}]}}
@@ -70,7 +123,6 @@ function render(){
    el.onpointermove=e=>{
      if(!drag||drag.id!==o.id||drag.pid!==e.pointerId)return;
      let dx=(e.clientX-drag.sx)/zoom,dy=(e.clientY-drag.sy)/zoom;
-     // Convert screen movement into map movement when the canvas is rotated.
      let a=-viewRot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
      let mx=dx*c-dy*s,my=dx*s+dy*c;
      o.x=snap(drag.ox+mx);o.y=snap(drag.oy+my);
@@ -92,24 +144,18 @@ function add(type,x=250,y=180){
  let o={id:uid(type),name:d[0],type,description:'',locationNote:'',x:snap(x),y:snap(y),width:d[1],height:d[2],rotation:0,floorId:f.id};
  f.objects.push(o);selected=o.id;selectedConn=null;push();render();props();save();status('✓ Added '+o.name+' to canvas');
 }
-// Public diagnostic hooks used by the Test Room button.
 window.CampusOS = {
   setTool: t => setTool(t),
   add: (t,x,y) => add(t,x,y)
 };
 
 function point(e){
- // Invert the canvas view transform to get map coordinates.
  let r=canvas.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
  let sx=e.clientX-cx,sy=e.clientY-cy;
  let a=-viewRot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
  let ux=sx*c-sy*s,uy=sx*s+sy*c;
  return{x:(ux/zoom)+700,y:(uy/zoom)+450};
 }
-// FINAL PLACEMENT HANDLER.
-// Creation happens on pointerup in capture phase. This deliberately avoids the
-// browser's click synthesis, which can be suppressed by pointer capture,
-// transforms, or drag handlers. Empty viewport releases create objects.
 viewport.addEventListener('pointerup',e=>{
  if(e.button!==0)return;
  if(tool==='select'||tool==='connect'||spaceDown)return;
@@ -153,7 +199,6 @@ function rotate(delta){
 function rotateFree(e,o,el){
  e.stopPropagation();e.preventDefault();
  let r=canvas.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
- // Convert object center to screen using the same view transform.
  let lc={x:(o.x+o.width/2-700)*zoom,y:(o.y+o.height/2-450)*zoom},vr=viewRot*Math.PI/180;
  let sx=lc.x*Math.cos(vr)-lc.y*Math.sin(vr)+cx,sy=lc.x*Math.sin(vr)+lc.y*Math.cos(vr)+cy;
  let start=Math.atan2(e.clientY-sy,e.clientX-sx),orig=o.rotation||0;
@@ -246,4 +291,9 @@ document.onkeydown=e=>{
  if(e.key.toLowerCase()==='g'){viewRot=(viewRot+90)%360;applyView();status('Canvas rotated right: '+viewRot+'°');return}
  let t=KEYS[e.key.toLowerCase()];if(t){e.preventDefault();setTool(t)}
 };
+registerServiceWorker();
+setupInstallPrompt();
+window.addEventListener('online', updateConnectionStatus);
+window.addEventListener('offline', updateConnectionStatus);
+updateConnectionStatus();
 push();refresh();

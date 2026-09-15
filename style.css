@@ -7,7 +7,7 @@ button:hover{background:#f1f5f9}
 .primary{width:100%;background:#2563eb;color:#fff;border-color:#2563eb}
 .topbar{height:68px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
 .topbar b{display:block;font-size:18px}.topbar small{color:#6b7280}
-.top{display:flex;gap:6px;align-items:center}.top label{font-size:11px;color:#6b7280}
+.top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.top label{font-size:11px;color:#6b7280}
 .tools,.props{background:#fff;padding:11px;overflow:auto}.tools{border-right:1px solid #d9dee5}.props{border-left:1px solid #d9dee5}
 .tools h3,.props h3{margin:2px 0 10px}.tool{display:block;width:100%;text-align:left}.tool.active{border-color:#2563eb;background:#eff6ff}
 .tool kbd{margin-right:6px}.help{border-top:1px solid #d9dee5;margin-top:10px;padding-top:8px;color:#6b7280;font-size:11px;line-height:1.8}
@@ -40,5 +40,9 @@ main{height:calc(100vh - 98px);display:grid;grid-template-columns:185px 1fr 270p
 .props label{display:block;color:#6b7280;font-size:11px;margin-bottom:8px}.props input,.props textarea,.props select{width:100%;margin-top:3px;padding:6px;border:1px solid #d9dee5;border-radius:5px}
 .props textarea{resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 7px}.props p{color:#6b7280;font-size:12px}
 .props #validation{font-size:11px;line-height:1.5;margin-top:10px}.ok{color:#15803d}.warn{color:#b45309}
+.status-pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid #cbd5e1;background:#f8fafc;color:#475569;font-size:11px}
+.status-pill.online{background:#ecfdf5;color:#166534;border-color:#a7f3d0}
+.status-pill.offline{background:#fff7ed;color:#9a4d00;border-color:#fed7aa}
+.install-btn{background:#2d2440;color:#fff;border-color:#2d2440}
 footer{height:30px;background:#fff;border-top:1px solid #d9dee5;display:flex;justify-content:space-between;padding:0 10px;align-items:center;color:#6b7280;font-size:10px}
 @media(max-width:950px){main{grid-template-columns:155px 1fr}.props{display:none}.top label{display:none}}
