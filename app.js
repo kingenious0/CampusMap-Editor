@@ -155,17 +155,39 @@ function refresh(){
 }
 
 function updateLines(){
- lines.innerHTML='';
- if(!showGraph)return;
- let f=floor();
- f.connections.forEach(c=>{
-   let a=f.objects.find(o=>o.id===c.from),b=f.objects.find(o=>o.id===c.to);if(!a||!b)return;
-   let l=document.createElementNS('http://www.w3.org/2000/svg','line'),p=center(a),q=center(b);
-   l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',q.x);l.setAttribute('y2',q.y);
-   l.classList.add('line');if(c.id===selectedConn)l.classList.add('selected');
-   l.onclick=e=>{e.stopPropagation();selectedConn=c.id;clearSelected();props();updateLines();render()};
-   lines.appendChild(l);
- });
+  if(!showGraph){
+    if(lines.firstChild) lines.innerHTML='';
+    return;
+  }
+  lines.innerHTML='';
+  let f=floor();
+  let objMap=new Map();
+  f.objects.forEach(o=>objMap.set(o.id,o));
+  f.connections.forEach(c=>{
+    let a=objMap.get(c.from),b=objMap.get(c.to);if(!a||!b)return;
+    let l=document.createElementNS('http://www.w3.org/2000/svg','line'),p=center(a),q=center(b);
+    l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',q.x);l.setAttribute('y2',q.y);
+    l.setAttribute('data-id',c.id);
+    l.classList.add('line');if(c.id===selectedConn)l.classList.add('selected');
+    l.onclick=e=>{e.stopPropagation();selectedConn=c.id;clearSelected();props();updateLines();render()};
+    lines.appendChild(l);
+  });
+}
+
+function updateLinesFast(){
+  if(!showGraph)return;
+  let f=floor();
+  let objMap=new Map();
+  f.objects.forEach(o=>objMap.set(o.id,o));
+  for(let i=0; i<f.connections.length; i++){
+    let c=f.connections[i];
+    let l=lines.querySelector(`line[data-id="${c.id}"]`);
+    if(!l)continue;
+    let a=objMap.get(c.from),b=objMap.get(c.to);
+    if(!a||!b)continue;
+    let p=center(a),q=center(b);
+    l.setAttribute('x1',p.x);l.setAttribute('y1',p.y);l.setAttribute('x2',q.x);l.setAttribute('y2',q.y);
+  }
 }
 
 function applyView(){
@@ -211,6 +233,7 @@ function render(){
      e.stopPropagation();
 
      const isModifier=e.shiftKey||e.ctrlKey||e.metaKey;
+     let selectionChanged=false;
      if(isModifier){
        if(selectedIds.has(o.id)){
          selectedIds.delete(o.id);
@@ -219,15 +242,20 @@ function render(){
          selectedIds.add(o.id);
          selected=o.id;
        }
+       selectionChanged=true;
      } else {
        if(!selectedIds.has(o.id)){
          setSelected(o.id);
+         selectionChanged=true;
        }
      }
      selectedConn=null;
-     props();
-     updateLines();
-     render();
+
+     if(selectionChanged){
+       props();
+       updateLines();
+       render();
+     }
 
      let f=floor();
      let items=Array.from(selectedIds).map(id=>{
@@ -236,34 +264,93 @@ function render(){
        return obj?{id,ox:obj.x,oy:obj.y,obj,dom}:null;
      }).filter(Boolean);
 
-     drag={items,sx:e.clientX,sy:e.clientY,pid:e.pointerId,el};
-     el.setPointerCapture(e.pointerId);
-   };
+     drag={
+       items,
+       sx:e.clientX,
+       sy:e.clientY,
+       pid:e.pointerId,
+       raf:null,
+       pending:null
+     };
 
-   el.onpointermove=e=>{
-     if(!drag||drag.pid!==e.pointerId)return;
-     let dx=(e.clientX-drag.sx)/zoom,dy=(e.clientY-drag.sy)/zoom;
-     let a=-viewRot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
-     let mx=dx*c-dy*s,my=dx*s+dy*c;
-     drag.items.forEach(it=>{
-       it.obj.x=snap(it.ox+mx);
-       it.obj.y=snap(it.oy+my);
-       if(it.dom){
-         it.dom.style.left=it.obj.x+'px';
-         it.dom.style.top=it.obj.y+'px';
+     const move=ev=>{
+       if(!drag||drag.pid!==ev.pointerId)return;
+       drag.pending={clientX:ev.clientX,clientY:ev.clientY};
+       if(!drag.raf){
+         drag.raf=requestAnimationFrame(()=>{
+           drag.raf=null;
+           if(!drag||!drag.pending)return;
+           const p=drag.pending;
+           let dx=(p.clientX-drag.sx)/zoom,dy=(p.clientY-drag.sy)/zoom;
+           let a=-viewRot*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+           let mx=dx*c-dy*s,my=dx*s+dy*c;
+           let moved=false;
+           for(let i=0;i<drag.items.length;i++){
+             let it=drag.items[i];
+             let nx=snap(it.ox+mx);
+             let ny=snap(it.oy+my);
+             if(it.obj.x!==nx||it.obj.y!==ny){
+               it.obj.x=nx;
+               it.obj.y=ny;
+               if(it.dom){
+                 it.dom.style.left=nx+'px';
+                 it.dom.style.top=ny+'px';
+               }
+               moved=true;
+             }
+           }
+           if(moved&&showGraph){
+             updateLinesFast();
+           }
+         });
        }
-     });
-     updateLines();
+     };
+
+     const up=ev=>{
+       if(!drag||drag.pid!==ev.pointerId)return;
+       if(drag.raf){
+         cancelAnimationFrame(drag.raf);
+         drag.raf=null;
+       }
+       removeEventListener('pointermove',move);
+       removeEventListener('pointerup',up);
+       removeEventListener('pointercancel',cancel);
+       let changed=drag.items.some(it=>it.obj.x!==it.ox||it.obj.y!==it.oy);
+       drag=null;
+       if(changed){
+         push();
+         save();
+         props();
+         updateLines();
+       }
+     };
+
+     const cancel=ev=>{
+       if(!drag||drag.pid!==ev.pointerId)return;
+       if(drag.raf){
+         cancelAnimationFrame(drag.raf);
+         drag.raf=null;
+       }
+       removeEventListener('pointermove',move);
+       removeEventListener('pointerup',up);
+       removeEventListener('pointercancel',cancel);
+       drag.items.forEach(it=>{
+         it.obj.x=it.ox;
+         it.obj.y=it.oy;
+         if(it.dom){
+           it.dom.style.left=it.ox+'px';
+           it.dom.style.top=it.oy+'px';
+         }
+       });
+       drag=null;
+       if(showGraph)updateLines();
+     };
+
+     addEventListener('pointermove',move);
+     addEventListener('pointerup',up);
+     addEventListener('pointercancel',cancel);
    };
 
-   el.onpointerup=e=>{
-     if(!drag||drag.pid!==e.pointerId)return;
-     let changed=drag.items.some(it=>it.obj.x!==it.ox||it.obj.y!==it.oy);
-     drag=null;
-     if(changed){push();save();props();updateLines()}
-   };
-
-   el.onpointercancel=()=>{drag=null};
    objects.appendChild(el);
  });
  updateLines();applyView();

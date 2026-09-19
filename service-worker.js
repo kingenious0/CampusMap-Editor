@@ -1,4 +1,4 @@
-const CACHE_NAME = 'campusos-map-editor-v6';
+const CACHE_NAME = 'campusos-map-editor-v7';
 const APP_SHELL = [
   './',
   './index.html',
