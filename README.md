@@ -39,8 +39,7 @@ A production-ready Progressive Web App for designing indoor campus maps, includi
 - `style.css` — app styling and layout
 - `manifest.webmanifest` — install metadata for browsers and desktop app support
 - `service-worker.js` — cache-first offline shell
-- `icons/` — app icons
-- `CampusOS_Map_Editor_v7_FINAL_FIXED/` — original static editor source
+- `icons/` — app icons and PWA assets
 
 ## License
 This project is licensed under the MIT License.

@@ -30,7 +30,10 @@
 
 <main>
 <aside class="tools">
-<h3>Tools</h3>
+<div class="sidebar-header">
+  <h3>Tools</h3>
+  <button id="toggleTools" class="collapse-icon-btn" title="Collapse Tools sidebar">◀</button>
+</div>
 <button class="tool active" data-tool="select"><kbd>V</kbd> Select</button>
 <button class="tool" data-tool="room"><kbd>R</kbd> Room</button>
 <button class="tool" data-tool="office"><kbd>O</kbd> Office</button>
@@ -43,7 +46,14 @@
 <button class="tool" data-tool="door"><kbd>D</kbd> Door</button>
 <button class="tool" data-tool="connect"><kbd>K</kbd> Connect</button>
 <hr>
-<button id="rotL">↺ Rotate 90°</button><button id="rotR">↻ Rotate 90°</button>
+<div class="btn-group">
+  <button id="rotL" title="Rotate 90° left">↺ 90°</button><button id="rotR" title="Rotate 90° right">↻ 90°</button>
+</div>
+<div class="btn-group">
+  <button id="copyBtn" title="Copy selection (Ctrl+C)">Copy</button>
+  <button id="pasteBtn" title="Paste selection (Ctrl+V)">Paste</button>
+  <button id="dupBtn" title="Duplicate selection (Ctrl+D)">Duplicate</button>
+</div>
 <button id="del" class="danger">Delete</button>
 <hr>
 <button id="undo">↶ Undo</button><button id="redo">↷ Redo</button>
@@ -52,33 +62,47 @@
 <section class="help">
 <h4>Shortcuts</h4>
 <div><kbd>[</kbd> object rotate left</div><div><kbd>]</kbd> object rotate right</div>
-<div><kbd>Q</kbd> canvas rotate left</div><div><kbd>G</kbd> canvas rotate right</div>
-<div><kbd>Space+drag</kbd> pan canvas</div><div><kbd>Middle drag</kbd> pan canvas</div>
-<div><kbd>Delete</kbd> remove</div><div><kbd>Ctrl+Z</kbd> undo</div>
-<div><kbd>Ctrl+Y</kbd> redo</div><div><kbd>Ctrl+S</kbd> save</div>
-<div><kbd>Esc</kbd> cancel/select</div>
+<div><kbd>G</kbd> toggle graph</div><div><kbd>Q</kbd> canvas rotate left</div>
+<div><kbd>Ctrl+C</kbd> copy</div><div><kbd>Ctrl+V</kbd> paste</div>
+<div><kbd>Ctrl+D</kbd> duplicate</div><div><kbd>Shift+click</kbd> multi-select</div>
+<div><kbd>Drag empty</kbd> box select</div><div><kbd>Space+drag</kbd> pan canvas</div>
+<div><kbd>Middle drag</kbd> pan canvas</div><div><kbd>Delete</kbd> remove</div>
+<div><kbd>Ctrl+B</kbd> toggle sidebars</div>
+<div><kbd>Ctrl+Z</kbd> undo</div><div><kbd>Ctrl+Y</kbd> redo</div>
+<div><kbd>Ctrl+S</kbd> save</div><div><kbd>Esc</kbd> cancel/select</div>
 </section>
 </aside>
 
 <section class="area">
 <div class="bar">
-  <b id="title"></b>
-  <span id="status">Ready — choose a tool, then click empty canvas</span>
+  <div class="bar-left">
+    <button id="toggleToolsBar" class="panel-btn" title="Toggle Tools sidebar">☰ Tools</button>
+    <b id="title"></b>
+    <span id="status">Ready — choose a tool, then click empty canvas</span>
+  </div>
   <span class="viewtools">
     <button id="viewL" title="Rotate canvas left">⟲</button>
     <button id="viewR" title="Rotate canvas right">⟳</button>
     <button id="viewReset" title="Reset canvas view">Reset</button>
     <button id="fit" title="Fit map to viewport">Fit</button><button id="testAdd" title="Test object placement">Test Room</button>
-    <button id="graphToggle" title="Show/hide connection graph">Graph</button>
+    <button id="graphToggle" title="Show/hide connection graph (G)">Graph <kbd>G</kbd></button>
     <button id="labelsToggle" title="Show/hide labels">Labels</button>
     <button id="zoomOut">−</button><span id="zoomText">100%</span><button id="zoomIn">+</button>
+    <button id="togglePropsBar" class="panel-btn" title="Toggle Properties sidebar">Props ⛭</button>
   </span>
 </div>
-<div id="viewport"><div id="stage"><div id="canvas"><svg id="lines"></svg><div id="objects"></div></div></div></div>
+<div id="viewport">
+  <button id="expandToolsFloating" class="floating-toggle-btn left" title="Expand Tools sidebar" hidden>▶ Tools</button>
+  <button id="expandPropsFloating" class="floating-toggle-btn right" title="Expand Properties sidebar" hidden>Props ◀</button>
+  <div id="stage"><div id="canvas"><svg id="lines"></svg><div id="objects"></div><div id="selectionBox" hidden></div></div></div>
+</div>
 </section>
 
 <aside class="props">
-<h3>Properties</h3><p id="empty">Select an object to edit it.</p>
+<div class="sidebar-header">
+  <h3>Properties</h3>
+  <button id="toggleProps" class="collapse-icon-btn" title="Collapse Properties sidebar">▶</button>
+</div><p id="empty">Select an object to edit it.</p>
 <form id="form" hidden>
 <label>ID<input id="pid" disabled></label><label>Name<input id="pname" required></label>
 <label>Type<input id="ptype" disabled></label>
