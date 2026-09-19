@@ -202,6 +202,54 @@ function centerViewport(){
  viewport.scrollTop=Math.max(0,cy-viewport.clientHeight/2);
 }
 
+function startInlineRename(o, el, lab){
+  if(!el || el.querySelector('.inline-rename-input')) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'inline-rename-input';
+  input.value = o.name;
+  if(lab) lab.style.visibility = 'hidden';
+  el.appendChild(input);
+
+  let committed = false;
+  const commit = (saveChange) => {
+    if(committed) return;
+    committed = true;
+    if(saveChange){
+      const val = input.value.trim();
+      if(val && val !== o.name){
+        o.name = val;
+        push();
+        save();
+        props();
+        status(`Renamed to "${val}"`);
+      }
+    }
+    render();
+  };
+
+  input.onpointerdown = e => e.stopPropagation();
+  input.onmousedown = e => e.stopPropagation();
+  input.onclick = e => e.stopPropagation();
+  input.ondblclick = e => e.stopPropagation();
+  input.onkeydown = e => {
+    e.stopPropagation();
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      commit(true);
+    } else if(e.key === 'Escape'){
+      e.preventDefault();
+      commit(false);
+    }
+  };
+  input.onblur = () => commit(true);
+
+  requestAnimationFrame(() => {
+    input.focus();
+    input.select();
+  });
+}
+
 function render(){
  let f=floor();$('title').textContent=project.building.id+' — '+f.name;
  objects.innerHTML='';
@@ -215,6 +263,12 @@ function render(){
    Object.assign(el.style,{left:o.x+'px',top:o.y+'px',width:o.width+'px',height:o.height+'px',transform:`rotate(${o.rotation||0}deg)`});
    let lab=document.createElement('div');lab.className='label';lab.textContent=o.name;lab.title=o.name;el.appendChild(lab);
    
+   el.ondblclick=e=>{
+     e.stopPropagation();
+     e.preventDefault();
+     startInlineRename(o, el, lab);
+   };
+
    if(isSelected && selectedIds.size===1){
      let h=document.createElement('div');h.className='handle';h.textContent='↻';h.title='Free rotate';h.onpointerdown=e=>rotateFree(e,o,el);el.appendChild(h);
      ['n','s','e','w','nw','ne','sw','se'].forEach(dir=>{
@@ -891,6 +945,16 @@ document.onkeydown=e=>{
    }
  }
  if(typing)return;
+ if(e.key==='F2'&&selected&&selectedIds.size===1){
+   e.preventDefault();
+   const targetEl=document.querySelector(`#objects .object[data-id="${selected}"]`);
+   const targetLab=targetEl?.querySelector('.label');
+   const targetObj=floor().objects.find(x=>x.id===selected);
+   if(targetObj&&targetEl){
+     startInlineRename(targetObj,targetEl,targetLab);
+   }
+   return;
+ }
  if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();del();return}
  if(e.key==='Escape'){setTool('select');clearSelected();selectedConn=null;props();render();return}
  if(e.key==='['){rotate(-90);return} if(e.key===']'){rotate(90);return}
