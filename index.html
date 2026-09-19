@@ -12,14 +12,12 @@
 <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/icon-192.svg">
 <title>CampusOS Map Editor</title>
-<link rel="stylesheet" href="./style.css?v=5">
+<link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
 <header class="topbar">
   <div><b>CampusOS Map Editor</b><small>Offline indoor mapping workspace</small></div>
   <div class="top">
-    <button id="btnHeaderTools" class="header-sidebar-btn active" title="Toggle Tools sidebar (T)">☰ Tools</button>
-    <button id="btnHeaderProps" class="header-sidebar-btn active" title="Toggle Properties sidebar (P)">Properties ⛭</button>
     <label>Building <select><option>ROB — Reynolds Okai Building</option></select></label>
     <label>Floor <select id="floorSelect"></select></label>
     <button id="newFloor">+ Floor</button><button id="save">Save</button>
@@ -128,7 +126,7 @@
 </aside>
 </main>
 <footer><span id="saved">Local autosave enabled</span><span>CampusOS Map Editor v7</span></footer>
-<script src="./app.js?v=5"></script>
+<script src="./app.js?v=6"></script>
 <script>
 document.getElementById('testAdd').onclick=()=>{
   if(window.CampusOS){ window.CampusOS.setTool('room'); window.CampusOS.add('room',600,350); }

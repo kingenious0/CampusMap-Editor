@@ -5,9 +5,9 @@ button{border:1px solid #d9dee5;background:#fff;border-radius:6px;padding:7px 9p
 button:hover{background:#f1f5f9}
 .danger{color:#dc2626}
 .primary{width:100%;background:#2563eb;color:#fff;border-color:#2563eb}
-.topbar{height:68px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;justify-content:space-between;align-items:center;padding:10px 14px}
-.topbar b{display:block;font-size:18px}.topbar small{color:#6b7280}
-.top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.top label{font-size:11px;color:#6b7280}
+.topbar{height:54px;min-height:54px;background:#fff;border-bottom:1px solid #d9dee5;display:flex;justify-content:space-between;align-items:center;padding:0 14px;gap:12px}
+.topbar b{display:block;font-size:16px;line-height:1.2}.topbar small{color:#6b7280;font-size:11px}
+.top{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;white-space:nowrap}.top label{font-size:11px;color:#6b7280;display:inline-flex;align-items:center;gap:4px}
 .tools,.props{background:#fff;padding:11px;overflow:auto;min-height:0;transition:width .2s ease,padding .2s ease}.tools{border-right:1px solid #d9dee5}.props{border-left:1px solid #d9dee5}
 .sidebar-header{display:flex;align-items:center;justify-content:space-between;margin:2px 0 10px}
 .sidebar-header h3{margin:0;font-size:14px}
@@ -17,9 +17,6 @@ button:hover{background:#f1f5f9}
 .panel-btn:hover{background:#f1f5f9}
 .panel-btn.active{background:#eff6ff;color:#2563eb;border-color:#93c5fd}
 .bar-left{display:flex;align-items:center;gap:8px;min-width:0;overflow:hidden}
-.header-sidebar-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 11px;font-size:12px;font-weight:600;border:1.5px solid #2563eb;background:#eff6ff;border-radius:6px;color:#1d4ed8;cursor:pointer;transition:all .15s}
-.header-sidebar-btn:hover{background:#dbeafe}
-.header-sidebar-btn:not(.active){background:#f8fafc;border-color:#cbd5e1;color:#64748b}
 .dock-tab{position:absolute;top:52px;z-index:100;background:#2563eb;color:#fff;border:1px solid #1d4ed8;box-shadow:0 2px 8px rgba(0,0,0,.15);padding:4px 8px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;display:inline-flex;align-items:center;gap:4px}
 .dock-tab[hidden]{display:none !important}
 .dock-tab:hover{background:#1d4ed8}
@@ -28,7 +25,7 @@ button:hover{background:#f1f5f9}
 .tool{display:block;width:100%;text-align:left}.tool.active{border-color:#2563eb;background:#eff6ff}
 .tool kbd{margin-right:6px}.help{border-top:1px solid #d9dee5;margin-top:10px;padding-top:8px;color:#6b7280;font-size:11px;line-height:1.8}
 .help div{display:flex;justify-content:space-between}kbd{border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;background:#f8fafc;padding:1px 5px;font:11px ui-monospace,monospace;color:#334155}
-main{height:calc(100vh - 98px);display:grid;grid-template-columns:185px 1fr 270px;grid-template-areas:"tools area props";min-height:0;transition:grid-template-columns .2s ease}
+main{height:calc(100vh - 84px);display:grid;grid-template-columns:185px 1fr 270px;grid-template-areas:"tools area props";min-height:0;transition:grid-template-columns .2s ease}
 main.collapse-tools{grid-template-columns:0px 1fr 270px}
 main.collapse-props{grid-template-columns:185px 1fr 0px}
 main.collapse-tools.collapse-props{grid-template-columns:0px 1fr 0px}
