@@ -12,7 +12,7 @@
 <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/icon-192.svg">
 <title>CampusOS Map Editor</title>
-<link rel="stylesheet" href="./style.css?v=4">
+<link rel="stylesheet" href="./style.css?v=5">
 </head>
 <body>
 <header class="topbar">
@@ -95,8 +95,8 @@
     <button id="togglePropsBar" class="panel-btn active" title="Toggle Properties sidebar (P)">Props ⛭</button>
   </span>
 </div>
-<button id="expandToolsFloating" class="dock-tab left" title="Show Tools sidebar (T)" hidden>▶ Show Tools</button>
-<button id="expandPropsFloating" class="dock-tab right" title="Show Properties sidebar (P)" hidden>Show Properties ◀</button>
+<button id="expandToolsFloating" class="dock-tab left" title="Show Tools sidebar (T)" hidden>▶ Tools</button>
+<button id="expandPropsFloating" class="dock-tab right" title="Show Properties sidebar (P)" hidden>Props ◀</button>
 <div id="viewport">
   <div id="stage"><div id="canvas"><svg id="lines"></svg><div id="objects"></div><div id="selectionBox" hidden></div></div></div>
 </div>
@@ -128,7 +128,7 @@
 </aside>
 </main>
 <footer><span id="saved">Local autosave enabled</span><span>CampusOS Map Editor v7</span></footer>
-<script src="./app.js?v=4"></script>
+<script src="./app.js?v=5"></script>
 <script>
 document.getElementById('testAdd').onclick=()=>{
   if(window.CampusOS){ window.CampusOS.setTool('room'); window.CampusOS.add('room',600,350); }
