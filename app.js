@@ -18,6 +18,8 @@ function updateSidebarCollapses(){
 
   $('toggleToolsBar')?.classList.toggle('active',!toolsCollapsed);
   $('togglePropsBar')?.classList.toggle('active',!propsCollapsed);
+  $('btnHeaderTools')?.classList.toggle('active',!toolsCollapsed);
+  $('btnHeaderProps')?.classList.toggle('active',!propsCollapsed);
 
   const flTools=$('expandToolsFloating');
   const flProps=$('expandPropsFloating');
@@ -765,9 +767,11 @@ $('fit').onclick=fitView;
 $('graphToggle').onclick=toggleGraph;
 $('labelsToggle').onclick=()=>{showLabels=!showLabels;render();status(showLabels?'Labels shown':'Labels hidden')};
 
+$('btnHeaderTools')?.addEventListener('click',toggleToolsSidebar);
 $('toggleTools')?.addEventListener('click',toggleToolsSidebar);
 $('toggleToolsBar')?.addEventListener('click',toggleToolsSidebar);
 $('expandToolsFloating')?.addEventListener('click',toggleToolsSidebar);
+$('btnHeaderProps')?.addEventListener('click',togglePropsSidebar);
 $('toggleProps')?.addEventListener('click',togglePropsSidebar);
 $('togglePropsBar')?.addEventListener('click',togglePropsSidebar);
 $('expandPropsFloating')?.addEventListener('click',togglePropsSidebar);
@@ -809,6 +813,8 @@ document.onkeydown=e=>{
  if(e.key==='['){rotate(-90);return} if(e.key===']'){rotate(90);return}
  if(e.key.toLowerCase()==='q'){viewRot=(viewRot+270)%360;applyView();status('Canvas rotated left: '+viewRot+'°');return}
  if(e.key.toLowerCase()==='g'){e.preventDefault();toggleGraph();return}
+ if(e.key.toLowerCase()==='t'){e.preventDefault();toggleToolsSidebar();return}
+ if(e.key.toLowerCase()==='p'){e.preventDefault();togglePropsSidebar();return}
  let t=KEYS[e.key.toLowerCase()];if(t){e.preventDefault();setTool(t)}
 };
 

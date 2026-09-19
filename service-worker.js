@@ -1,4 +1,4 @@
-const CACHE_NAME = 'campusos-map-editor-v2';
+const CACHE_NAME = 'campusos-map-editor-v4';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,26 +27,14 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(() => caches.match('./index.html'))
-    );
-    return;
-  }
-
+  // Network-first with cache fallback to prevent stale files during edits
   event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(response => {
+    fetch(request).then(response => {
+      if (response && response.status === 200) {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-        return response;
-      }).catch(() => {
-        if (request.destination === 'image' || request.destination === 'style' || request.destination === 'script') {
-          return caches.match('./index.html');
-        }
-        return caches.match(request);
-      });
-    })
+      }
+      return response;
+    }).catch(() => caches.match(request).then(cached => cached || (request.mode === 'navigate' ? caches.match('./index.html') : null)))
   );
 });

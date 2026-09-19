@@ -12,12 +12,14 @@
 <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icons/icon-192.svg">
 <title>CampusOS Map Editor</title>
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=4">
 </head>
 <body>
 <header class="topbar">
   <div><b>CampusOS Map Editor</b><small>Offline indoor mapping workspace</small></div>
   <div class="top">
+    <button id="btnHeaderTools" class="header-sidebar-btn active" title="Toggle Tools sidebar (T)">☰ Tools</button>
+    <button id="btnHeaderProps" class="header-sidebar-btn active" title="Toggle Properties sidebar (P)">Properties ⛭</button>
     <label>Building <select><option>ROB — Reynolds Okai Building</option></select></label>
     <label>Floor <select id="floorSelect"></select></label>
     <button id="newFloor">+ Floor</button><button id="save">Save</button>
@@ -67,6 +69,8 @@
 <div><kbd>Ctrl+D</kbd> duplicate</div><div><kbd>Shift+click</kbd> multi-select</div>
 <div><kbd>Drag empty</kbd> box select</div><div><kbd>Space+drag</kbd> pan canvas</div>
 <div><kbd>Middle drag</kbd> pan canvas</div><div><kbd>Delete</kbd> remove</div>
+<div><kbd>T</kbd> toggle Tools</div>
+<div><kbd>P</kbd> toggle Properties</div>
 <div><kbd>Ctrl+B</kbd> toggle sidebars</div>
 <div><kbd>Ctrl+Z</kbd> undo</div><div><kbd>Ctrl+Y</kbd> redo</div>
 <div><kbd>Ctrl+S</kbd> save</div><div><kbd>Esc</kbd> cancel/select</div>
@@ -76,7 +80,7 @@
 <section class="area">
 <div class="bar">
   <div class="bar-left">
-    <button id="toggleToolsBar" class="panel-btn" title="Toggle Tools sidebar">☰ Tools</button>
+    <button id="toggleToolsBar" class="panel-btn active" title="Toggle Tools sidebar (T)">☰ Tools</button>
     <b id="title"></b>
     <span id="status">Ready — choose a tool, then click empty canvas</span>
   </div>
@@ -88,12 +92,12 @@
     <button id="graphToggle" title="Show/hide connection graph (G)">Graph <kbd>G</kbd></button>
     <button id="labelsToggle" title="Show/hide labels">Labels</button>
     <button id="zoomOut">−</button><span id="zoomText">100%</span><button id="zoomIn">+</button>
-    <button id="togglePropsBar" class="panel-btn" title="Toggle Properties sidebar">Props ⛭</button>
+    <button id="togglePropsBar" class="panel-btn active" title="Toggle Properties sidebar (P)">Props ⛭</button>
   </span>
 </div>
+<button id="expandToolsFloating" class="dock-tab left" title="Show Tools sidebar (T)" hidden>▶ Show Tools</button>
+<button id="expandPropsFloating" class="dock-tab right" title="Show Properties sidebar (P)" hidden>Show Properties ◀</button>
 <div id="viewport">
-  <button id="expandToolsFloating" class="floating-toggle-btn left" title="Expand Tools sidebar" hidden>▶ Tools</button>
-  <button id="expandPropsFloating" class="floating-toggle-btn right" title="Expand Properties sidebar" hidden>Props ◀</button>
   <div id="stage"><div id="canvas"><svg id="lines"></svg><div id="objects"></div><div id="selectionBox" hidden></div></div></div>
 </div>
 </section>
@@ -124,7 +128,7 @@
 </aside>
 </main>
 <footer><span id="saved">Local autosave enabled</span><span>CampusOS Map Editor v7</span></footer>
-<script src="./app.js"></script>
+<script src="./app.js?v=4"></script>
 <script>
 document.getElementById('testAdd').onclick=()=>{
   if(window.CampusOS){ window.CampusOS.setTool('room'); window.CampusOS.add('room',600,350); }
